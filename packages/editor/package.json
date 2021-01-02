@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "hydra-synth": "file:../synth"
+  }
+}

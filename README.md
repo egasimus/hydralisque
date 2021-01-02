@@ -18,3 +18,5 @@ Standalone fork of [Olivia Jack](https://github.com/ojack)'s
 * [ ] TODO: offline rendering
 * [ ] TODO: hide toolbar
 * [ ] TODO: edit code in separate window
+* [ ] TODO: integrate [Orca](https://github.com/hundredrabbits/Orca)
+* [ ] TODO: easy import of external audio and video files

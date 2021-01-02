@@ -4,16 +4,9 @@
 
 const {app, BrowserWindow, Menu} = require('electron')
 const {is} = require('electron-util')
-const unhandled = require('electron-unhandled')
-const debug = require('electron-debug')
-const contextMenu = require('electron-context-menu')
 
-const config = require('./config')
-const menu = require('./menu')
-
-unhandled()
-debug()
-contextMenu()
+require('electron-unhandled')()
+require('electron-debug')()
 
 const windows = {
   viewer: undefined,
@@ -72,7 +65,7 @@ app.on('activate', createWindows)
 
 ;(async () => {
   await app.whenReady()
-  Menu.setApplicationMenu(menu)
+  Menu.setApplicationMenu(null)
   await createWindows()
 })()
 

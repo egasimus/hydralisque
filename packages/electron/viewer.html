@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hydralisque</title>
+    <link rel="stylesheet" href="./css/fontawesome.css">
+    <link rel="stylesheet" href="./css/codemirror.css">
+    <link rel="stylesheet" href="./css/tomorrow-night-eighties.css">
+    <link rel="stylesheet" href="./css/show-hint.css">
+    <link rel="stylesheet" href="./css/style.css">
+	</head>
+	<body>
+    <canvas id="hydra-canvas"></canvas>
+    <canvas id="audio-canvas"></canvas>
+    <script src="./viewer.js"></script>
+    <script>window.onload = () => initViewer({
+      host: window,
+      element: document.getElementById('hydra-canvas')
+    })</script>
+	</body>
+</html>
+
