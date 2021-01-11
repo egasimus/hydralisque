@@ -1,6 +1,4 @@
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": [ "atom", "editor", "electron", "server", "synth" ],
   "version": "independent"
 }
