@@ -1,7 +1,5 @@
 {
-  "packages": [
-    "packages/*"
-  ],
-  "version": "independent",
-  "npmClient": "yarn"
+  "npmClient": "yarn",
+  "packages": [ "atom", "editor", "electron", "server", "synth" ],
+  "version": "independent"
 }
