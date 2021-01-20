@@ -1,7 +1,11 @@
-function initViewer ({host, element, repl}) {
+function initViewer ({
+  host,
+  element,
+  repl = require('hydra/repl.js')
+}) {
   const canvas = initCanvas(element)
-  host.P5 = require('hydra/hydra-server/app/src/p5-wrapper.js')
-  const pb = host.pb = new (require('hydra/hydra-server/app/src/pb-live.js'))()
+  host.P5 = require('hydra/p5-wrapper.js')
+  const pb = host.pb = new (require('hydra/pb-live.js'))()
   const isIOS =
     (/iPad|iPhone|iPod/.test(navigator.platform) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
@@ -9,8 +13,7 @@ function initViewer ({host, element, repl}) {
   const precision = isIOS ? 'highp' : 'mediump'
   const autoLoop = false
   const hydra = new (require('hydra-synth'))({ pb, canvas, autoLoop, precision })
-  const log = require('hydra/hydra-server/app/src/log.js')
-  const repl = require('hydra/hydra-server/app/src/repl.js')
+  const log = require('hydra/log.js')
   log.init()
   // get initial code to fill gallery
   // define extra functions (eventually should be added to hydra-synth?)
@@ -26,3 +29,13 @@ function initViewer ({host, element, repl}) {
   return engine
 }
 
+function initCanvas (canvas) {
+  canvas.style = {}
+  canvas.style.position = 'absolute';
+  canvas.style.top = '0';
+  canvas.style.bottom = '0';
+  canvas.style.left = '0';
+  canvas.style.right = '0';
+  canvas.style.background = '#012';
+  return canvas
+}

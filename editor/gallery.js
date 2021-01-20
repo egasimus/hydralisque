@@ -25,8 +25,8 @@ class Gallery {
     // })
     window.addEventListener('popstate', (event) => {
       this.setSketchFromURL(callback)
-    console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
-  });
+      console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
+    });
     this.setRandomSketch = this.setRandomSketch.bind(this)
   }
 
@@ -40,8 +40,8 @@ class Gallery {
   }
 
   setSketchFromURL(callback) {
-    hush()
-    render(o0)
+    if (window.hush) window.hush()
+    if (window.render) window.render(o0)
     let searchParams = new URLSearchParams(window.location.search)
     let base64Code = searchParams.get('code')
   //  if(!base64Code) base64Code = searchParams.get('id') // backwards compatibility with earlier form of naming. id is now called code

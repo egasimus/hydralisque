@@ -1,7 +1,6 @@
 #!/usr/bin/env electron
-
 'use strict';
-
+process.chdir(__dirname)
 const {app, BrowserWindow, Menu} = require('electron')
 const {is} = require('electron-util')
 
@@ -24,7 +23,7 @@ const createViewer = async () => {
   })
   win.on('ready-to-show', () => win.show())
   win.on('closed', () => {windows.viewer = undefined})
-  await win.loadFile(require('path').join(__dirname, 'app/viewer.html'))
+  await win.loadFile(require('path').join(__dirname, 'viewer.html'))
   return win
 }
 
@@ -38,8 +37,8 @@ const createEditor = async () => {
     webPreferences: { nodeIntegration: true }
   })
   win.on('ready-to-show', () => win.show())
-  win.on('closed', () => {windows.viewer = undefined})
-  await win.loadFile(require('path').join(__dirname, 'app/editor.html'))
+  win.on('closed', () => {windows.editor = undefined})
+  await win.loadFile(require('path').join(__dirname, 'editor.html'))
   return win
 }
 
@@ -65,7 +64,7 @@ app.on('activate', createWindows)
 
 ;(async () => {
   await app.whenReady()
-  Menu.setApplicationMenu(null)
+  //Menu.setApplicationMenu(null)
   await createWindows()
 })()
 
