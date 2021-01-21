@@ -1,10 +1,6 @@
 {
   "name": "hydralisque",
   "version": "0.0.0",
-  "devDependencies": {
-    "lerna": "^3.22.1",
-    "lerna-wizard": "^1.1.1"
-  },
   "scripts": {
     "start": "electron electron/app.js",
     "shell": "nix-shell",
