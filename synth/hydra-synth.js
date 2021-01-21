@@ -106,6 +106,7 @@ class HydraRenderer {
   }
 
   eval(code) {
+    console.log('hydra.eval', code)
     this.sandbox.eval(code)
   }
 

@@ -53,8 +53,11 @@ function initViewer ({
 
   ipcRenderer.on('eval', (event, code) => {
     console.log('eval', code)
+    console.log(hydra)
     hydra.eval(code)
   })
+
+  host.cc = initMIDI()
 
   return engine
 }
@@ -68,4 +71,25 @@ function initCanvas (canvas) {
   canvas.style.right = '0';
   canvas.style.background = '#012';
   return canvas
+}
+
+function initMIDI () {
+  const cc = Array(128).fill(0.5)
+  navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
+  return cc
+
+  function onMIDISuccess ({inputs, outputs}) {
+    for (var input of inputs.values()) {
+      input.onmidimessage = getMIDIMessage;
+    }
+    function getMIDIMessage ({data:[channel, index, value]}) {
+      value = ((value+1)/128.0 - 0.5)*2.0 // normalize to [-1;1]
+      console.log('Midi received on cc#' + index + ' value:' + value)  // uncomment to monitor incoming Midi
+      cc[index] = value
+    }
+  }
+
+  function onMIDIFailure() {
+    alert('Could not access your MIDI devices.');
+  }
 }

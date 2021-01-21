@@ -24,6 +24,7 @@ module.exports = (parent) => {
     eval(initial)
     // optional params
     var localEval = function (code)  {
+      console.log('localEval', code)
       eval(code)
     }
 
