@@ -1,5 +1,0 @@
-{
-  "npmClient": "yarn",
-  "packages": [ "atom", "editor", "electron", "server", "synth" ],
-  "version": "independent"
-}
