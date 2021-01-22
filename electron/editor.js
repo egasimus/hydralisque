@@ -11,7 +11,7 @@ function initEditor ({
   host.o0     = null
 
   const editor =
-    new (require('hydra/editor.js'))(element)
+    new (require('hydra-editor/editor.js'))(element)
 
   const hydra = {
     eval (code) {
@@ -21,10 +21,10 @@ function initEditor ({
   }
 
   const menu =
-    new (require('hydra/menu.js'))({ editor, hydra })
+    new (require('hydra-editor/menu.js'))({ editor, hydra })
 
   const gallery = menu.sketches =
-    new (require('hydra/gallery.js'))(
+    new (require('hydra-editor/gallery.js'))(
       code => {
         editor.setValue(code)
         hydra.eval(code)
@@ -48,6 +48,15 @@ function initEditor ({
     //repl,
     //log: console.log
   //})
+  const midi = document.getElementById('midi-monitor')
+  const ccs = []
+  for (let i = 0; i < 128; i++) {
+    ccs[i] = midi.appendChild(
+      document.createElement('div'))
+  }
+  require("./midi")((index,value)=>{
+    ccs[index].innerText = `cc[${index}]=${value}`
+  })
 
   return editor
 }

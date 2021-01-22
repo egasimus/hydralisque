@@ -79,7 +79,7 @@ EditorClass.prototype.show = function () {
   // l.style.opacity= 1
   // m.style.opacity = 1
 	l.style.display = 'block'
-	m.style.display = 'flex'
+	m && (m.style.display = 'flex')
 //  this.logElement.style.opacity  = 1
   this.isShowing = true
 }

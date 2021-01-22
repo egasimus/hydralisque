@@ -1,0 +1,38 @@
+.pad-half { padding: 0.5em }
+.pad      { padding: 1em }
+.pad-2    { padding: 2em }
+
+.em, .em-2, .em-half { pointer-events: none }
+.em      { min-width: 1em; min-height: 1em }
+.em-2    { min-width: 2em; min-height: 2em }
+.em-half { min-width: 0.5em; min-height: 0.5em }
+
+.align-left   { text-align: left }
+.align-center { text-align: center }
+.align-right  { text-align: right }
+
+.flex-row,
+.flex-column,
+.flex-row-reverse      { align-items: center; justify-content: center }
+
+.flex-row              { display: flex; flex-flow: row nowrap }
+.flex-row-reverse      { display: flex; flex-flow: row-reverse nowrap }
+.flex-column           { display: flex; flex-flow: column nowrap }
+
+.flex-wrap             { flex-wrap: wrap }
+
+.flex-grow             { flex-grow: 1 }
+.flex-grow-2           { flex-grow: 2 }
+
+.flex-align-start      { align-items: start }
+.flex-align-stretch    { align-items: stretch }
+
+.flex-justify-center   { justify-content: center }
+.flex-justify-start    { justify-content: flex-start }
+.flex-justify-stretch  { justify-content: stretch }
+.flex-justify-between  { justify-content: space-between }
+.flex-justify-around   { justify-content: space-around }
+
+.width-full  { width: 100% }
+.width-half  { width: 50% }
+.width-third { width: 33.33% }
