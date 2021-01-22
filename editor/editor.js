@@ -11,7 +11,7 @@ var Mutator = require('./Mutator.js');
 
 var isShowing = true
 
-var EditorClass = function () {
+var EditorClass = function (hydra) {
 	console.log("*** Editor class created");
   var self = this
 
@@ -21,7 +21,7 @@ var EditorClass = function () {
   document.body.appendChild(container)
   container.appendChild(el)
 
-  this.mutator = new Mutator(this);
+  this.mutator = new Mutator(this, hydra);
   this.cm = CodeMirror.fromTextArea(el, {
     theme: 'tomorrow-night-eighties',
     value: 'hello',

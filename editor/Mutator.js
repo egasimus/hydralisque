@@ -2,12 +2,12 @@ const {Parser} = require("acorn");
 const {generate} = require('astring');
 const { defaultTraveler, attachComments, makeTraveler } = require('astravel');
 const {UndoStack} = require('./UndoStack.js');
-const repl = require('./repl.js')
 
 class Mutator {
 
-  constructor(editor) {
+  constructor(editor, hydra) {
     this.editor = editor;
+    this.hydra = hydra || require('./repl.js');
     this.undoStack = new UndoStack();
 
     this.initialVector = [];
@@ -41,7 +41,7 @@ class Mutator {
         this.editor.cm.setValue(regen);
 
         // Evaluate the updated expression.
-        repl.eval(regen, (code, error) => {
+        this.hydra.eval(regen, (code, error) => {
             // If we got an error, keep trying something else.
             if (error) {
                 console.log("Eval error: " + regen);
@@ -75,7 +75,7 @@ class Mutator {
 
   setText(text) {
     this.editor.cm.setValue(text);
-    repl.eval(text, (code, error) => {
+    this.hydra.eval(text, (code, error) => {
     });
 
     }

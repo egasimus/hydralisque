@@ -10,15 +10,15 @@ function initEditor ({
   host.render = ()=>{}
   host.o0     = null
 
-  const editor =
-    new (require('hydra-editor/editor.js'))(element)
-
   const hydra = {
     eval (code) {
       console.log('eval', code)
       ipcRenderer.send('eval', code)
     }
   }
+
+  const editor =
+    new (require('hydra-editor/editor.js'))(hydra)
 
   const menu =
     new (require('hydra-editor/menu.js'))({ editor, hydra })
