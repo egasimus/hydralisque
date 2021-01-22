@@ -16,7 +16,7 @@ html, body {
   color: #fff;
   line-height: 1.4;
   font-family: Open Sans Condensed, sans-serif;
-  font-size: 20px;
+  font-size: 3vw;
 }
 
 .camera-inputs{
@@ -105,8 +105,8 @@ a:hover {
 #editor-container {
   position: fixed;
   inset: 20px;
-  left: 192px;
-  right: 192px;
+  left: 10%;
+  right: 10%;
 }
 
 #menu {
@@ -134,7 +134,7 @@ a:hover {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 192px;
+  width: 10%;
   background: #040404;
 }
 
@@ -143,6 +143,6 @@ a:hover {
   top: 20px;
   left: 0;
   bottom: 0;
-  width: 192px;
+  width: 10%;
   background: #040404;
 }
