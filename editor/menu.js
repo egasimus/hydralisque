@@ -1,4 +1,3 @@
-const repl = require('./repl.js')
 const prettier = require("prettier/standalone")
 const parserBabel = require("prettier/parser-babel");
 
@@ -35,7 +34,7 @@ class Menu {
   }
 
   runAll() {
-    repl.eval(this.editor.getValue(), (string, err) => {
+    this.hydra.eval(this.editor.getValue(), (string, err) => {
     //  console.log('eval', err)
      this.editor.flashCode()
       if(!err) this.sketches.saveLocally(this.editor.getValue())
@@ -46,7 +45,7 @@ class Menu {
     this.clearAll()
     this.sketches.setRandomSketch()
     this.editor.setValue(this.sketches.code)
-    repl.eval(this.editor.getValue())
+    this.hydra.eval(this.editor.getValue())
   }
 
   formatCode() {
@@ -58,7 +57,7 @@ class Menu {
   }
 
   shareSketch() {
-      repl.eval(this.editor.getValue(), (code, error) => {
+      this.hydra.eval(this.editor.getValue(), (code, error) => {
         console.log('evaluated', code, error)
         if(!error){
           this.showConfirmation( (name) => {
@@ -84,7 +83,7 @@ class Menu {
 
   clearAll() {
     hush()
-    speed = 1
+    window.speed && (window.speed = 1)
     this.sketches.clear()
     this.editor.clear()
     //@todo: add clear/reset function to hydra

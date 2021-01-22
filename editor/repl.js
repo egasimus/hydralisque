@@ -6,7 +6,7 @@ module.exports = {
     var jsString = arg
     var isError = false
     try {
-      eval(jsString)
+      if (window.eval) window.eval(jsString)
       // log(jsString)
       log('')
     } catch (e) {
