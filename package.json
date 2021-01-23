@@ -8,10 +8,10 @@
   },
   "private": true,
   "workspaces": [
-    "atom",
-    "editor",
-    "electron",
-    "server",
-    "synth"
+    "@hydralisque/atom",
+    "@hydralisque/editor",
+    "@hydralisque/electron",
+    "@hydralisque/server",
+    "@hydralisque/synth"
   ]
 }

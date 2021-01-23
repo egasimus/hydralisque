@@ -1,5 +1,5 @@
 {
-  "name": "hydra-server",
+  "name": "@hydralisque/server",
   "version": "1.2.4",
   "description": "",
   "main": "server.js",
@@ -16,6 +16,7 @@
   "author": "Olivia Jack",
   "license": "AGPL",
   "dependencies": {
+    "@hydralisque/editor": "0.0.0",
     "acorn": "^8.0.4",
     "astravel": "^0.5.0",
     "astring": "^1.4.0",
@@ -26,7 +27,6 @@
     "enumerate-devices": "^1.1.1",
     "express": "^4.15.2",
     "getusermedia": "^2.0.1",
-    "hydra": "file:../editor",
     "inherits": "^2.0.3",
     "meyda": "^4.1.3",
     "multer": "^1.4.1",

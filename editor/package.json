@@ -1,7 +1,0 @@
-{
-  "name": "hydra-editor",
-  "version": "0.0.0",
-  "dependencies": {
-    "hydra-synth": "file:../synth"
-  }
-}

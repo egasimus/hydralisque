@@ -1,5 +1,5 @@
 {
-  "name": "hydra-synth",
+  "name": "@hydralisque/synth",
   "version": "1.3.4",
   "description": "base synth for hydra-editor",
   "main": "index.js",
