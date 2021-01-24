@@ -1,8 +1,6 @@
-const generateGlsl = require('./glsl-utils.js').generateGlsl
-const formatArguments = require('./glsl-utils.js').formatArguments
-
+const {generateGlsl, formatArguments} = require('./utils')
 // const glslTransforms = require('./glsl/composable-glsl-functions.js')
-const utilityGlsl = require('./glsl/utility-functions.js')
+const utilityGlsl = require('./utility-functions')
 
 var GlslSource = function (obj) {
   this.transforms = []

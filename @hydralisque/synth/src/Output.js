@@ -1,6 +1,14 @@
 //const transforms = require('./glsl-transforms.js')
 
-var Output = function ({ regl, precision, label = "", width, height}) {
+module.exports = Output
+
+function Output ({
+  regl,
+  precision,
+  label = "",
+  width,
+  height
+}) {
   this.regl = regl
   this.precision = precision
   this.label = label

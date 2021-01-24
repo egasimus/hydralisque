@@ -1,4 +1,3 @@
-
 module.exports = function (options) {
   return new Promise(function(resolve, reject) {
     //  async function startCapture(displayMediaOptions) {
