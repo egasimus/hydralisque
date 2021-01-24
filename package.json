@@ -2,7 +2,7 @@
   "name": "hydralisque",
   "version": "0.0.0",
   "scripts": {
-    "start": "electron electron/app.js",
+    "start": "electron ./@hydralisque/electron/app.js",
     "shell": "nix-shell",
     "build": "nix-build -E 'with import <nixpkgs> {}; callPackage ./default.nix {}'"
   },

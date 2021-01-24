@@ -12,24 +12,33 @@ function initEditor ({
 
   const hydra = {
     eval (code) {
-      console.log('eval', code)
+      console.debug('eval', code)
       ipcRenderer.send('eval', code)
+      viewers.eval(code)
     }
   }
 
   const editor =
-    new (require('hydra-editor/editor.js'))(hydra)
+    new (require('@hydralisque/editor/editor.js'))({
+      container: document.getElementById('editor-container'),
+      hydra
+    })
 
   const menu =
-    new (require('hydra-editor/menu.js'))({ editor, hydra })
+    new (require('@hydralisque/editor/menu.js'))({ editor, hydra })
+
+  const viewers =
+    initViewers(document.getElementById('viewers'))
 
   const gallery = menu.sketches =
-    new (require('hydra-editor/gallery.js'))(
+    new (require('@hydralisque/editor/gallery.js'))(
       code => {
         editor.setValue(code)
         hydra.eval(code)
       }
     )
+
+  const palette = initPalette(document.getElementById('palette'), gallery)
 
   host.onkeydown = ({ctrlKey, altKey, shiftKey, metaKey, key}) => {
     console.log(ctrlKey, altKey, shiftKey, metaKey, key)
@@ -48,6 +57,7 @@ function initEditor ({
     //repl,
     //log: console.log
   //})
+
   const midi = document.getElementById('midi-monitor')
   const ccs = []
   for (let i = 0; i < 128; i++) {
@@ -59,4 +69,39 @@ function initEditor ({
   })
 
   return editor
+}
+
+function initPalette (host, gallery) {
+  for (let {sketch_id, code} of gallery.examples) {
+    host.appendChild(Object.assign(document.createElement('a'), {
+      innerText: sketch_id,
+      href:      code
+    }))
+  }
+}
+
+function initViewers (container) {
+
+  const outputs = [0,1,2,3]
+  const viewers = outputs.map(initViewer)
+
+  return {
+    eval (code) {
+      console.log(123,viewers)
+      for (let output of outputs) {
+        console.log(12, output, viewers[output])
+        viewers[output].eval(code)
+      }
+    }
+  }
+
+  function initViewer (o) {
+    const canvas = container.appendChild(Object.assign(document.createElement('canvas'),
+      { width: 160, height: 120, style: 'background:black' }))
+    const events = new (require('events').EventEmitter)()
+    const engine = require('./viewer')({host:window, canvas, events})
+    const eval = code => events.emit('eval', `${code}\n;render(o${o});`)
+    return { canvas, events, engine, eval }
+  }
+
 }

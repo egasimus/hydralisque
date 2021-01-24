@@ -33,6 +33,8 @@
 .flex-justify-between  { justify-content: space-between }
 .flex-justify-around   { justify-content: space-around }
 
+.height-full { height: 100% }
+
 .width-full  { width: 100% }
 .width-half  { width: 50% }
 .width-third { width: 33.33% }

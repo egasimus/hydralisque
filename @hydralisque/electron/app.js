@@ -45,9 +45,9 @@ const createEditor = async () => {
 // Prevent multiple instances of the app
 if (!app.requestSingleInstanceLock()) app.quit()
 app.on('second-instance', () => {
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore()
-    mainWindow.show()
+  for (let window of Object.values(windows).filter(Boolean)) {
+    if (window.isMinimized()) window.restore()
+    window.show()
   }
 })
 

@@ -11,14 +11,18 @@ var Mutator = require('./Mutator.js');
 
 var isShowing = true
 
-var EditorClass = function (hydra) {
+var EditorClass = function ({hydra, container}) {
+
 	console.log("*** Editor class created");
   var self = this
 
-	var container = document.createElement('div')
-  container.setAttribute('id','editor-container')
+  if (!container) {
+    container = document.createElement('div')
+    container.setAttribute('id','editor-container')
+    document.body.appendChild(container)
+  }
+
   var el = document.createElement('TEXTAREA')
-  document.body.appendChild(container)
   container.appendChild(el)
 
   this.mutator = new Mutator(this, hydra);

@@ -1,19 +1,16 @@
-const {ipcRenderer} = require('electron')
+module.exports = initViewer
 
 function initViewer ({
-  host,
-  element,
-  repl = require('hydra/repl.js')
-}) {
+  host   = window,
+  canvas = initCanvas(document.getElementById('hydra-canvas')),
+  events = require('electron').ipcRenderer
+}={}) {
 
-  const canvas =
-    initCanvas(element)
+  const P5 = host.P5 =
+    require('@hydralisque/editor/p5-wrapper.js')
 
-  host.P5 =
-    require('hydra/p5-wrapper.js')
-
-  const pb = host.pb =
-    new (require('hydra/pb-live.js'))()
+  const patchbay = host.pb =
+    new (require('@hydralisque/editor/pb-live.js'))()
 
   const isIOS =
     (/iPad|iPhone|iPod/.test(navigator.platform) ||
@@ -27,12 +24,13 @@ function initViewer ({
     false
 
   const hydra =
-    new (require('hydra-synth'))({
-      pb, canvas, autoLoop, precision
+    new (require('@hydralisque/synth'))({
+      patchbay, canvas, autoLoop, precision
     })
 
   const log =
-    require('hydra/log.js')
+    require('@hydralisque/editor/log.js')
+
   log.init()
 
   // define extra functions (eventually should be added to hydra-synth?)
@@ -44,14 +42,16 @@ function initViewer ({
     render(o0)
   }
 
-  pb.init(hydra.captureStream,
-    { server: host.location.origin, room: 'iclc' })
+  patchbay.init(hydra.captureStream, {
+    server: host.location.origin,
+    room: 'iclc'
+  })
 
   const engine = require('raf-loop')(
     hydra.tick.bind(hydra)
   ).start()
 
-  ipcRenderer.on('eval', (event, code) => {
+  events.on('eval', (code) => {
     console.log('eval', code)
     console.log(hydra)
     hydra.eval(code)
@@ -69,6 +69,6 @@ function initCanvas (canvas) {
   canvas.style.bottom = '0';
   canvas.style.left = '0';
   canvas.style.right = '0';
-  canvas.style.background = '#012';
+  canvas.style.background = '#000';
   return canvas
 }

@@ -1,19 +1,19 @@
-const Output = require('./src/output.js')
 const loop = require('raf-loop')
-const Source = require('./src/hydra-source.js')
 const Mouse = require('mouse-change')()
-const Audio = require('./src/lib/audio.js')
-const VidRecorder = require('./src/lib/video-recorder.js')
-const ArrayUtils = require('./src/lib/array-utils.js')
-const Sandbox = require('./src/eval-sandbox.js')
 
-const Generator = require('./src/generator-factory.js')
+const Output      = require('./src/output.js')
+const Source      = require('./src/hydra-source.js')
+const Audio       = require('./src/lib/audio.js')
+const VidRecorder = require('./src/lib/video-recorder.js')
+const ArrayUtils  = require('./src/lib/array-utils.js')
+const Sandbox     = require('./src/eval-sandbox.js')
+const Generator   = require('./src/generator-factory.js')
 
 // to do: add ability to pass in certain uniforms and transforms
 class HydraRenderer {
 
   constructor ({
-    pb = null,
+    patchbay = null,
     width = 1280,
     height = 720,
     numSources = 4,
@@ -29,77 +29,65 @@ class HydraRenderer {
 
     ArrayUtils.init()
 
-    this.pb = pb
-
-    this.width = width
-    this.height = height
-    this.renderAll = false
+    this.pb          = patchbay
+    this.width       = width
+    this.height      = height
+    this.renderAll   = false
     this.detectAudio = detectAudio
 
     this._initCanvas(canvas)
 
-
     // object that contains all properties that will be made available on the global context and during local evaluation
     this.synth = {
-      time: 0,
-      bpm: 30,
-      width: this.width,
+      time:   0,
+      bpm:    30,
+      width:  this.width,
       height: this.height,
-      fps: undefined,
-      stats: {
-        fps: 0
-      },
-      speed: 1,
-      mouse: Mouse,
+      fps:    undefined,
+      stats:  { fps: 0 },
+      speed:  1,
+      mouse:  Mouse,
       render: this._render.bind(this),
       setResolution: this.setResolution.bind(this),
       update: (dt) => {},// user defined update function
-      hush: this.hush.bind(this)
+      hush:   this.hush.bind(this)
     }
 
     this.timeSinceLastUpdate = 0
     this._time = 0 // for internal use, only to use for deciding when to render frames
 
-  //  window.synth = this.synth
-
     // only allow valid precision options
     let precisionOptions = ['lowp','mediump','highp']
     let precisionValid = precisionOptions.includes(precision.toLowerCase())
-
     this.precision = precisionValid ? precision.toLowerCase() : 'mediump'
-
-    if(!precisionValid){
-      console.warn('[hydra-synth warning]\nConstructor was provided an invalid floating point precision value of "' + precision + '". Using default value of "mediump" instead.')
-    }
+    if(!precisionValid) console.warn(
+      '[hydra-synth warning]\n'+
+      'Constructor was provided an invalid floating point precision value of "'
+      + precision + '". Using default value of "mediump" instead.')
 
     this.extendTransforms = extendTransforms
-
-    // boolean to store when to save screenshot
-    this.saveFrame = false
-
-    // if stream capture is enabled, this object contains the capture stream
-    this.captureStream = null
-
-    this.generator = undefined
 
     this._initRegl()
     this._initOutputs(numOutputs)
     this._initSources(numSources)
     this._generateGlslTransforms()
 
-    this.synth.screencap = () => {
-      this.saveFrame = true
-    }
+    // boolean to store when to save screenshot
+    this.saveFrame = false
+    this.synth.screencap = () => { this.saveFrame = true }
 
+    // if stream capture is enabled, this object contains the capture stream
+    this.captureStream = null
     if (enableStreamCapture) {
       this.captureStream = this.canvas.captureStream(25)
       // to do: enable capture stream of specific sources and outputs
       this.synth.vidRecorder = new VidRecorder(this.captureStream)
     }
 
-    if(detectAudio) this._initAudio()
+    this.generator = undefined
 
-    if(autoLoop) loop(this.tick.bind(this)).start()
+    if (detectAudio) this._initAudio()
+    if (autoLoop) loop(this.tick.bind(this)).start()
 
     // final argument is properties that the user can set, all others are treated as read-only
     this.sandbox = new Sandbox(this.synth, makeGlobal, ['speed', 'update', 'bpm', 'fps'])

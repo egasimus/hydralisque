@@ -20,12 +20,17 @@ html, body {
   overflow: hidden;
 }
 
+.editor-ui-main {
+  height: 80%;
+}
+
+#viewers {
+  height: 15%;
+  background: #080808;
+}
+
 #menu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1.5em;
+  height: 5%;
   z-index: 10;
   background: #080808;
   font-weight: bold;

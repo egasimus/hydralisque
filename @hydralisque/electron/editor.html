@@ -7,31 +7,42 @@
     <link rel="stylesheet" href="./css/codemirror.css">
     <link rel="stylesheet" href="./css/tomorrow-night-eighties.css">
     <link rel="stylesheet" href="./css/show-hint.css">
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/flex.css">
+
+    <link rel="stylesheet" href="./flex.css">
+    <link rel="stylesheet" href="./editor.css">
 	</head>
-	<body class="flex-row" bgcolor="black">
-    <div id="midi-monitor"></div>
-    <div class="flex-column">
-      <div id="menu" class="flex-row">
-        <div><i class="fas fa-bars icon"></i></div>
-        <div class="flex-grow align-center">h y d r a l i s q u e</div>
-        <div>
-          <i id ="run-icon" class="fas fa-play-circle icon" title="Run all code (ctrl+shift+enter)" aria-hidden="true"></i>
-          <i id="share-icon" title="upload to gallery" class="fas fa-upload icon" aria-hidden="true"></i>
-          <i id="clear-icon" title="clear all" class="fa fa-trash icon" aria-hidden="true"></i>
-          <i id="shuffle-icon" title="show random sketch" class="fas fa-random icon" aria-hidden="true"></i>
-          <i id="mutator-icon" title="make random change" class="fas fa-dice icon" aria-hidden="true"></i>
-          <i id="close-icon" class="fas fa-question-circle icon" aria-hidden="true"></i>
-        </div>
+
+	<body class="flex-column flex-align-stretch editor-ui" bgcolor="black">
+
+    <div id="info-container"></div>
+
+    <div id="menu" class="flex-row">
+      <div><i class="fas fa-bars icon"></i></div>
+      <div class="flex-grow align-center">h y d r a l i s q u e</div>
+      <div>
+        <i id ="run-icon" class="fas fa-play-circle icon" title="Run all code (ctrl+shift+enter)" aria-hidden="true"></i>
+        <i id="share-icon" title="upload to gallery" class="fas fa-upload icon" aria-hidden="true"></i>
+        <i id="clear-icon" title="clear all" class="fa fa-trash icon" aria-hidden="true"></i>
+        <i id="shuffle-icon" title="show random sketch" class="fas fa-random icon" aria-hidden="true"></i>
+        <i id="mutator-icon" title="make random change" class="fas fa-dice icon" aria-hidden="true"></i>
+        <i id="close-icon" class="fas fa-question-circle icon" aria-hidden="true"></i>
       </div>
-      <div id="editor-container"></div>
-    <div id="palette"></div>
+    </div>
+
+    <div class="editor-ui-main flex-row flex-justify-stretch flex-align-stretch">
+      <div id="midi-monitor" class="flex-grow"></div>
+      <div id="editor-container" class="flex-grow-2"></div>
+      <div id="palette" class="flex-grow flex-column flex-align-start"></div>
+    </div>
+
+    <div id="viewers" class="editor-ui-viewers flex-row flex-justify-around flex-align-center pad">
+    </div>
+
     <script src="./editor.js"></script>
     <script>window.onload = () => initEditor({
       host: window,
       element: document.getElementById('editor-container')
     })</script>
-    <div id="info-container"></div>
+
 	</body>
 </html>
