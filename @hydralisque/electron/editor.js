@@ -81,6 +81,7 @@ function initPalette (host, gallery) {
 }
 
 function initViewers (container) {
+  return { eval () {} }
 
   const outputs = [0,1,2,3]
   const viewers = outputs.map(initViewer)

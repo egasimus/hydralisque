@@ -3,34 +3,29 @@
 // should probably be replaced with an abstract syntax tree
 
 module.exports = (parent) => {
-  var initialCode = ``
-
-  var sandbox = createSandbox(initialCode)
-
-  var addToContext = (name, object) => {
-    initialCode += `
-      var ${name} = ${object}
-    `
-    sandbox = createSandbox(initialCode)
-  }
-
-
+  let initial = ``
+  let sandbox = createSandbox(initial)
   return {
-    addToContext: addToContext,
-    eval: (code) => sandbox.eval(code)
+    addToContext (name, object) {
+      initial += `;var ${name} = ${object};`
+      sandbox = createSandbox(initial)
+    },
+    eval (code) { sandbox.eval(code) }
+  }
+}
+
+function createSandbox (initial) {
+  eval(initial)
+
+  // optional params
+  var localEval = function (code)  {
   }
 
-  function createSandbox (initial) {
-    eval(initial)
-    // optional params
-    var localEval = function (code)  {
-      console.log('localEval', code)
+  // API/data for end-user
+  return {
+    eval: function localEval (code) {
+      console.debug('localEval', code)
       eval(code)
-    }
-
-    // API/data for end-user
-    return {
-      eval: localEval
     }
   }
 }

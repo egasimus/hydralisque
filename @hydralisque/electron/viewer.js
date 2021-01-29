@@ -51,9 +51,7 @@ function initViewer ({
     hydra.tick.bind(hydra)
   ).start()
 
-  events.on('eval', (code) => {
-    console.log('eval', code)
-    console.log(hydra)
+  events.on('eval', (event, code) => {
     hydra.eval(code)
   })
 
