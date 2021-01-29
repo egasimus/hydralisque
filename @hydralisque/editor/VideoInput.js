@@ -1,7 +1,7 @@
-const PatchBay = require('./src/pb-live.js')
-const getUserMedia = require('getusermedia')
+const getUserMedia     = require('getusermedia')
 const enumerateDevices = require('enumerate-devices')
 
+const PatchBay = require('./PatchBay.js')
 
 var vidInput
 var vidDropdown

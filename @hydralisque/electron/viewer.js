@@ -7,10 +7,10 @@ function initViewer ({
 }={}) {
 
   const P5 = host.P5 =
-    require('@hydralisque/editor/p5-wrapper.js')
+    require('@hydralisque/editor/P5Wrapper.js')
 
   const patchbay = host.pb =
-    new (require('@hydralisque/editor/pb-live.js'))()
+    new (require('@hydralisque/editor/PatchBay.js'))()
 
   const isIOS =
     (/iPad|iPhone|iPod/.test(navigator.platform) ||
@@ -29,7 +29,7 @@ function initViewer ({
     })
 
   const log =
-    require('@hydralisque/editor/log.js')
+    require('@hydralisque/editor/Log')
 
   log.init()
 

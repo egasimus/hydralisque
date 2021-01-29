@@ -131,13 +131,9 @@ a:hover {
 
 .CodeMirror {
   position: absolute;
-  /* top: 20px;
-  left: 20px; */
   z-index: 5;
-  /* width: calc(100% - 20px);
-  height: calc(100% - 20px); */
   background: transparent;
-  width: calc(100% - 60px);
+  width: 100%;
 }
 
 .console {

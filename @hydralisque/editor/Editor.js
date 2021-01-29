@@ -1,17 +1,4 @@
-/* eslint-disable no-eval */
-var CodeMirror = require('codemirror/lib/codemirror')
-require('codemirror/mode/javascript/javascript')
-require('codemirror/addon/hint/javascript-hint')
-require('codemirror/addon/hint/show-hint')
-require('codemirror/addon/selection/mark-selection')
-require('codemirror/addon/comment/comment')
-
-var Mutator = require('./Mutator.js');
-
-
-var isShowing = true
-
-var EditorClass = function ({hydra, container}) {
+const EditorClass = module.exports = function ({hydra, container}) {
 
 	console.log("*** Editor class created");
   var self = this
@@ -25,7 +12,14 @@ var EditorClass = function ({hydra, container}) {
   var el = document.createElement('TEXTAREA')
   container.appendChild(el)
 
-  this.mutator = new Mutator(this, hydra);
+  this.mutator = new (require('./Mutator'))(this, hydra);
+
+  const CodeMirror = require('codemirror/lib/codemirror')
+  require('codemirror/mode/javascript/javascript')
+  require('codemirror/addon/hint/javascript-hint')
+  require('codemirror/addon/hint/show-hint')
+  require('codemirror/addon/selection/mark-selection')
+  require('codemirror/addon/comment/comment')
   this.cm = CodeMirror.fromTextArea(el, {
     theme: 'tomorrow-night-eighties',
     value: 'hello',
@@ -44,14 +38,13 @@ var EditorClass = function ({hydra, container}) {
   let searchParams = new URLSearchParams(window.location.search)
   let showCode = searchParams.get('show-code')
 
-    if(showCode == "false") {
-      console.log("not showing code")
-      var l = document.getElementsByClassName('CodeMirror-scroll')[0]
-      l.style.display = 'none'
-    //  self.logElement.style.display = 'none'
-      isShowing = false
-    }
-  //}
+  if(showCode == "false") {
+    console.log("not showing code")
+    var l = document.getElementsByClassName('CodeMirror-scroll')[0]
+    l.style.display = 'none'
+  //  self.logElement.style.display = 'none'
+    this.isShowing = false
+  }
 }
 
 EditorClass.prototype.clear = function () {
@@ -141,7 +134,3 @@ EditorClass.prototype.getCurrentBlock = function () { // thanks to graham wakefi
     text: str
   }
 }
-
-
-
-module.exports = EditorClass

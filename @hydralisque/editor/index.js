@@ -1,12 +1,14 @@
-const PatchBay = require('./src/pb-live.js')
-const HydraSynth = require('hydra-synth')
-const Editor = require('./src/editor.js')
-const loop = require('raf-loop')
-const Gallery  = require('./src/gallery.js')
-const Menu = require('./src/menu.js')
-const keymaps = require('./keymaps.js')
-const log = require('./src/log.js')
-const repl = require('./src/repl.js')
+const HydraSynth = require('@hydralisque/synth')
+const loop       = require('raf-loop')
+
+const PatchBay = require('./PatchBay.js')
+const Editor   = require('./Editor.js')
+const Gallery  = require('./Gallery.js')
+const Menu     = require('./Menu.js')
+
+const keymaps = require('./Keymaps.js')
+const log     = require('./Log.js')
+const repl    = require('./REPL.js')
 
 // side effect of module load -> TRES BAD!
 window.onload = init

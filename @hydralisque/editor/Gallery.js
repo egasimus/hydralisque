@@ -2,7 +2,6 @@ const request = require('superagent')
 const examples = require('./examples.json')
 const sketches = []
 
-
 class Gallery {
   constructor (callback) {
     this.sketches = []
@@ -12,9 +11,9 @@ class Gallery {
     this.exampleIndex = null
 
     // request.get('/sketches').end((err, res) => {
-    //   console.log('got sketches', res.text, err)
+    //   console.debug('got sketches', res.text, err)
     //   if(err) {
-    //     console.log('err getting sketches', err)
+    //     console.debug('err getting sketches', err)
     //   } else {
     //     this.sketches = JSON.parse(res.text)
     //   }
@@ -25,7 +24,7 @@ class Gallery {
     // })
     window.addEventListener('popstate', (event) => {
       this.setSketchFromURL(callback)
-      console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
+      console.debug("location: " + document.location + ", state: " + JSON.stringify(event.state));
     });
     this.setRandomSketch = this.setRandomSketch.bind(this)
   }
@@ -47,7 +46,7 @@ class Gallery {
   //  if(!base64Code) base64Code = searchParams.get('id') // backwards compatibility with earlier form of naming. id is now called code
     let sketch_id = searchParams.get('sketch_id')
     let code = ''
-    console.log("id", sketch_id, "code", base64Code)
+    console.debug("id", sketch_id, "code", base64Code)
 
     // boolean to determine whether a sketch was found based on the URL, either through looking through the database or rendering the code
     this.foundSketch = false
@@ -55,7 +54,7 @@ class Gallery {
     if(sketch_id) {
       var sketch = this.getExampleById(sketch_id)
       if(sketch) {
-        console.log('found', sketch)
+        console.debug('found', sketch)
           this.setSketch(sketch)
           callback(this.code, false)
       } else {
@@ -63,9 +62,9 @@ class Gallery {
           .get('/sketchById')
           .query({sketch_id: sketch_id})
           .end((err, res) => {
-            console.log('got sketches', res.text, err)
+            console.debug('got sketches', res.text, err)
             if(err) {
-              console.log('err getting sketches', err)
+              console.debug('err getting sketches', err)
               this.setSketchFromCode(base64Code, callback)
             } else {
               this.sketches = JSON.parse(res.text)
@@ -85,7 +84,7 @@ class Gallery {
         this.setSketchFromCode(base64Code, callback)
       }
     //
-    //   // console.log('found ', sketch)
+    //   // console.debug('found ', sketch)
     //   // if(sketch) {
     //   //   this.setSketch(sketch)
     //   //   this. = true0
@@ -93,7 +92,7 @@ class Gallery {
     //   //   this.code = this.decodeBase64(base64Code)
     //   //   this.foundSketch = true
     //   // } else {
-    //   //   console.log('id not found', sketch_id)
+    //   //   console.debug('id not found', sketch_id)
     //   //   this.setRandomSketch()
     //   // }
     //
@@ -124,8 +123,8 @@ class Gallery {
   }
 
   setToURL(params){
-    //       console.log(base64)
-    console.log('params', params)
+    //       console.debug(base64)
+    console.debug('params', params)
     // keep code in url for backwards compatibility / compatibility between local and public versions
     var url_params
     if(params.sketch_id) {
@@ -136,7 +135,7 @@ class Gallery {
     // } else {
     //   url_params = params.map( (param, index) => `${param.label}=${param.value}`).join('&')
     // }
-  //  console.log('url params', url_params)
+  //  console.debug('url params', url_params)
     let newurl = window.location.protocol + '//' +
     window.location.host + window.location.pathname + '?' + url_params
   //  window.location.href = newurl
@@ -164,7 +163,7 @@ class Gallery {
 
   setRandomSketch() {
     // if there are sketches, set code from sketch, otherwise generate random
-    console.log("examples length", this.examples, this.exampleIndex)
+    console.debug("examples length", this.examples, this.exampleIndex)
     if(this.examples.length > 0) {
       let index
       // if(this.exampleIndex === null) {
@@ -177,7 +176,7 @@ class Gallery {
       //   if(index >= this.examples.length) index = 0
       // }
       this.exampleIndex = index
-    //  console.log('example is', this.examples[rand])
+    //  console.debug('example is', this.examples[rand])
       this.setSketch(this.examples[index])
     } else {
       var startString = 'osc(' + 2 + Math.floor(Math.pow(10, Math.random() * 2)) + ')'
@@ -191,7 +190,7 @@ class Gallery {
   // shares via twitter
   shareSketch(code, hydra, name) {
     this.saveSketch(code, () => {
-      console.log("URL is", this.url, 'sketch is', this.current)
+      console.debug("URL is", this.url, 'sketch is', this.current)
       hydra.getScreenImage((img) => {
         request
           .post('/image')
@@ -207,9 +206,9 @@ class Gallery {
         //  .query(query)
           .end((err, res) => {
             if(err) {
-              console.log('error postingimage', err)
+              console.debug('error postingimage', err)
             } else {
-              console.log('image response', res.text)
+              console.debug('image response', res.text)
             //  self.setToURL([ { label: 'sketch_id', value: res.text}, {label: 'code', value: base64} ])
 
             }
@@ -218,26 +217,26 @@ class Gallery {
         // oReq.open("POST", "https://localhost:8000/image", true);
         // oReq.onload = function (oEvent) {
         //   // Uploaded.
-        //   console.log("uploaded", oEvent)
+        //   console.debug("uploaded", oEvent)
         // };
         // oReq.send(img);
-      //  console.log('got image', img)
+      //  console.debug('got image', img)
       })
     })
   }
 
   saveSketch(code, callback) {
     let self = this
-    //console.log('saving in gallery', code)
+    //console.debug('saving in gallery', code)
     let base64 = this.encodeBase64(code)
-  //  console.log('code is', base64)
+  //  console.debug('code is', base64)
 
     let query = {
       code: base64,
       parent: this.current ? this.current.sketch_id : null
     }
 
-    console.log('saving in gallery', query)
+    console.debug('saving in gallery', query)
     request
       .post('/sketch')
       // .send({
@@ -246,10 +245,10 @@ class Gallery {
       .query(query)
       .end((err, res) => {
         if(err) {
-          console.log('error posting sketch', err)
+          console.debug('error posting sketch', err)
           if(callback) callback(err)
         } else {
-          console.log('response', res.text)
+          console.debug('response', res.text)
         //  self.setToURL([ { label: 'sketch_id', value: res.text}, {label: 'code', value: base64} ])
           self.setSketch({
             sketch_id: res.text,
@@ -268,7 +267,7 @@ class Gallery {
     // } else {
     //   url_params = params.map( (param, index) => `${param.label}=${param.value}`).join('&')
     // }
-    console.log('url params', url_params)
+    console.debug('url params', url_params)
     let newurl = window.location.protocol + '//' +
     window.location.host + window.location.pathname + '?' + url_params
     window.history.pushState({ path: newurl }, '', newurl)
@@ -276,7 +275,7 @@ class Gallery {
   }
 
   getExampleById(id) {
-    console.log('looking for', id, this.examples, this.sketches)
+    console.debug('looking for', id, this.examples, this.sketches)
     var sketches =  this.examples.filter((sketch) => sketch.sketch_id === id)
     if(sketches.length <= 0) sketches = this.sketches.filter((sketch) => sketch.sketch_id === id)
     return sketches[0]

@@ -1,7 +1,7 @@
 /* globals sessionStorage */
 // Extends rtc-patch-bay to include support for nicknames and persistent session storage
 
-var PatchBay = require('./rtc-patch-bay.js')
+const PatchBay = require('./PatchBayRTC.js')
 //var PatchBay = require('./../../../../rtc-patch-bay')
 var inherits = require('inherits')
 

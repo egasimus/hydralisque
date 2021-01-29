@@ -15,7 +15,6 @@
   background: rgba(0, 0, 0, 0);
   transition: background-color 0.3s ease;
   color: #cccccc;
-  font-size: 18px;
   height: 100%;
 }
 .cm-s-tomorrow-night-eighties span span.CodeMirror-selectedtext {

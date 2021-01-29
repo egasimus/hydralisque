@@ -19,19 +19,19 @@ function initEditor ({
   }
 
   const editor =
-    new (require('@hydralisque/editor/editor.js'))({
+    new (require('@hydralisque/editor/Editor'))({
       container: document.getElementById('editor-container'),
       hydra
     })
 
   const menu =
-    new (require('@hydralisque/editor/menu.js'))({ editor, hydra })
+    new (require('@hydralisque/editor/Menu'))({ editor, hydra })
 
   const viewers =
     initViewers(document.getElementById('viewers'))
 
   const gallery = menu.sketches =
-    new (require('@hydralisque/editor/gallery.js'))(
+    new (require('@hydralisque/editor/Gallery'))(
       code => {
         editor.setValue(code)
         hydra.eval(code)

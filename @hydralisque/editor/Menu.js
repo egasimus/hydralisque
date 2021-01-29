@@ -28,7 +28,7 @@ class Menu {
       }
     }
 
-	   this.mutatorButton.onclick = this.mutateSketch.bind(this);
+	  this.mutatorButton.onclick = this.mutateSketch.bind(this);
     this.isClosed = false
     this.closeModal()
   }
@@ -57,14 +57,14 @@ class Menu {
   }
 
   shareSketch() {
-      this.hydra.eval(this.editor.getValue(), (code, error) => {
-        console.log('evaluated', code, error)
-        if(!error){
-          this.showConfirmation( (name) => {
-            this.sketches.shareSketch(code, this.hydra, name)
-          }, () => this.hideConfirmation() )
-        }
-      })
+    this.hydra.eval(this.editor.getValue(), (code, error) => {
+      console.log('evaluated', code, error)
+      if(!error){
+        this.showConfirmation( (name) => {
+          this.sketches.shareSketch(code, this.hydra, name)
+        }, () => this.hideConfirmation() )
+      }
+    })
   }
 
   showConfirmation(successCallback, terminateCallback) {
@@ -92,10 +92,12 @@ class Menu {
   closeModal () {
     document.getElementById("info-container").className = "hidden"
     this.closeButton.className = "fas fa-question-circle icon"
-    this.shareButton.classList.remove('hidden')
-    this.clearButton.classList.remove('hidden')
-    this.mutatorButton.classList.remove('hidden');
-    this.runButton.classList.remove('hidden');
+    for (let button of [
+      this.shareButton,
+      this.clearButton,
+      this.mutatorButton,
+      this.runButton
+    ]) button.classList.remove('hidden')
     this.editorText.style.opacity = 1
     this.isClosed = true
   }
@@ -103,10 +105,12 @@ class Menu {
   openModal () {
     document.getElementById("info-container").className = ""
     this.closeButton.className = "fas fa-times icon"
-    this.shareButton.classList.add('hidden')
-    this.clearButton.classList.add('hidden')
-    this.mutatorButton.classList.add('hidden');
-    this.runButton.classList.add('hidden');
+    for (let button of [
+      this.shareButton,
+      this.clearButton,
+      this.mutatorButton,
+      this.runButton
+    ]) button.classList.add('hidden')
     this.editorText.style.opacity = 0.0
     this.isClosed = false
   }
