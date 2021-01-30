@@ -2,19 +2,24 @@ const prettier = require("prettier/standalone")
 const parserBabel = require("prettier/parser-babel");
 
 class Menu {
-  constructor (obj) {
-    this.sketches = obj.sketches
-    this.editor = obj.editor
-    this.hydra = obj.hydra
+  constructor ({
+    sketches,
+    editor,
+    engine
+  }={}) {
+    this.sketches = sketches
+    this.editor   = editor
+    this.engine   = engine
 
     // variables related to popup window
-    this.closeButton = document.getElementById("close-icon")
-    this.clearButton =  document.getElementById("clear-icon")
-    this.shareButton =  document.getElementById("share-icon")
+    this.closeButton   = document.getElementById("close-icon")
+    this.clearButton   = document.getElementById("clear-icon")
+    this.shareButton   = document.getElementById("share-icon")
     this.shuffleButton = document.getElementById("shuffle-icon")
     this.mutatorButton = document.getElementById("mutator-icon")
-    this.runButton = document.getElementById("run-icon")
-    this.editorText = document.getElementsByClassName('CodeMirror-scroll')[0]
+    this.runButton     = document.getElementById("run-icon")
+    this.editorText    = document.getElementsByClassName('CodeMirror-scroll')[0]
+    this.pauseButton   = document.getElementById("pause-icon")
 
     this.runButton.onclick = this.runAll.bind(this)
     this.shuffleButton.onclick = this.shuffleSketches.bind(this)
@@ -27,6 +32,9 @@ class Menu {
         this.openModal()
       }
     }
+    this.pauseButton.onclick = () => {
+      this.engine.pause()
+    }
 
 	  this.mutatorButton.onclick = this.mutateSketch.bind(this);
     this.isClosed = false
@@ -34,7 +42,7 @@ class Menu {
   }
 
   runAll() {
-    this.hydra.eval(this.editor.getValue(), (string, err) => {
+    this.engine.eval(this.editor.getValue(), (string, err) => {
     //  console.log('eval', err)
      this.editor.flashCode()
       if(!err) this.sketches.saveLocally(this.editor.getValue())
@@ -45,7 +53,7 @@ class Menu {
     this.clearAll()
     this.sketches.setRandomSketch()
     this.editor.setValue(this.sketches.code)
-    this.hydra.eval(this.editor.getValue())
+    this.engine.eval(this.editor.getValue())
   }
 
   formatCode() {
@@ -57,11 +65,11 @@ class Menu {
   }
 
   shareSketch() {
-    this.hydra.eval(this.editor.getValue(), (code, error) => {
+    this.engine.eval(this.editor.getValue(), (code, error) => {
       console.log('evaluated', code, error)
       if(!error){
         this.showConfirmation( (name) => {
-          this.sketches.shareSketch(code, this.hydra, name)
+          this.sketches.shareSketch(code, this.engine, name)
         }, () => this.hideConfirmation() )
       }
     })
@@ -116,6 +124,7 @@ class Menu {
   }
 
   mutateSketch(evt) {
+    console.log(mutate);
   	if (evt.shiftKey) {
       this.editor.mutator.doUndo();
   	} else {

@@ -15,20 +15,24 @@ class HydraRenderer {
     precision = 'mediump',
     extendTransforms = {} // add your own functions on init
   } = {}) {
-    require('./lib/array-utils.js').init()
+
+    require('./lib/ArrayUtils').init()
+
     this.pb          = patchbay
     this.width       = width
     this.height      = height
     this.renderAll   = false
     this.detectAudio = detectAudio
+
     initCanvas(this, canvas)
+
     this.synth = {
       // object that contains all properties that will be made available
       // on the global context and during local evaluation
       time:   0,
       bpm:    30,
-      width:  this.width,
-      height: this.height,
+      width,
+      height,
       fps:    undefined,
       stats:  { fps: 0 },
       speed:  1,
@@ -38,8 +42,10 @@ class HydraRenderer {
       update: (dt) => {},// user defined update function
       hush:   this.hush.bind(this)
     }
+
     this.timeSinceLastUpdate = 0
     this._time = 0 // for internal use, only to use for deciding when to render frames
+
     // only allow valid precision options
     let precisionOptions = ['lowp','mediump','highp']
     let precisionValid = precisionOptions.includes(precision.toLowerCase())
@@ -48,20 +54,34 @@ class HydraRenderer {
       '[hydra-synth warning]\n'+
       'Constructor was provided an invalid floating point precision value of "'
       + precision + '". Using default value of "mediump" instead.')
+
     this.extendTransforms = extendTransforms
+
     initRegl(this)
+
     initOutputs(this, numOutputs)
+
     initSources(this, numSources)
+
     generateGlslTransforms(this)
+
     initScreenshot(this)
+
     initRecorder(this, enableStreamCapture)
+
     this.generator = undefined
+
     if (detectAudio) initAudio(this)
+
     if (autoLoop) (require('raf-loop'))(this.tick.bind(this)).start()
-    // final argument is properties that the user can set, all others are treated as read-only
+    
     this.sandbox = new (require('./EvalSandbox.js'))(
-      this.synth, makeGlobal,
-      ['speed', 'update', 'bpm', 'fps'])
+      this.synth,
+      makeGlobal,
+      // properties that the user can set:
+      // (all others are treated as read-only)
+      ['speed', 'update', 'bpm', 'fps']
+    )
   }
 
   eval (code) {

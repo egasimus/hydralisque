@@ -2,13 +2,12 @@
 // Possibly should be integrated with lfo extension, etc.
 // to do: transform time rather than array values, similar to working with coordinates in hydra
 
-var easing = require('./easing-functions.js')
-
-var map = (num, in_min, in_max, out_min, out_max) => {
+const map = (num, in_min, in_max, out_min, out_max) => {
   return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 module.exports = {
+
   init: () => {
 
     Array.prototype.fast = function(speed = 1) {
@@ -26,9 +25,9 @@ module.exports = {
         this._smooth = 1
         this._ease = ease
       }
-      else if (easing[ease]){
+      else if (require('./Easing')[ease]){
         this._smooth = 1
-        this._ease = easing[ease]
+        this._ease = require('./Easing')[ease]
       }
       return this
     }
@@ -55,20 +54,20 @@ module.exports = {
   },
 
   getValue: (arr = []) => ({time, bpm}) =>{
-    let speed = arr._speed ? arr._speed : 1
+    let speed  = arr._speed ? arr._speed : 1
     let smooth = arr._smooth ? arr._smooth : 0
-    let index = time * speed * (bpm / 60) + (arr._offset || 0)
+    let index  = time * speed * (bpm / 60) + (arr._offset || 0)
 
     if (smooth!==0) {
-      let ease = arr._ease ? arr._ease : easing['linear']
+      let ease = arr._ease ? arr._ease : require('./Easing')['linear']
       let _index = index - (smooth / 2)
       let currValue = arr[Math.floor(_index % (arr.length))]
       let nextValue = arr[Math.floor((_index + 1) % (arr.length))]
       let t = Math.min((_index%1)/smooth,1)
       return ease(t) * (nextValue - currValue) + currValue
-    }
-    else {
+    } else {
       return arr[Math.floor(index % (arr.length))]
     }
   }
+
 }

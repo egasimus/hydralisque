@@ -45,7 +45,7 @@ function initViewer ({
 }
 
 function initEngine ({
-  events,
+  events, IPCChannel = 'hydra',
   patchbay, server,
   canvas, autoLoop, precision
 }) {
@@ -58,20 +58,35 @@ function initEngine ({
     { server, room: 'iclc' }
   )
 
+  let paused = false
   const mainLoop = require('raf-loop')(
     engine.tick.bind(engine)
   ).start()
 
-  console.log(events)
+  events.on(IPCChannel, (event, {
+    eval,
+    seek,
+    pause
+  }) => {
 
-  events.on('eval', (event, code) => {
-    console.debug('eval', code)
-    engine.eval(code)
-  })
+    if (eval) engine.eval(eval)
 
-  events.on('seek', (event, time) => {
-    console.debug('seek', time)
-    engine.seek(time)
+    if (seek) engine.seek(seek)
+
+    switch (pause) {
+      case true:
+        paused = true
+        mainLoop.stop()
+        break
+      case false:
+        paused = false
+        mainLoop.start()
+        break
+      case 'toggle':
+        paused ? mainLoop.start() : mainLoop.stop();
+        paused = !paused
+    }
+
   })
 
   return { engine, mainLoop }

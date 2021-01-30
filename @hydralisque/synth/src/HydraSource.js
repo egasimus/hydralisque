@@ -1,5 +1,5 @@
-const Webcam = require('./lib/webcam.js')
-const Screen = require('./lib/screenmedia.js')
+const Webcam = require('./lib/Webcam')
+const Screen = require('./lib/Screen')
 
 class HydraSource {
   constructor ({ regl, width, height, pb, label = ""}) {

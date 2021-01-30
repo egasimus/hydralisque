@@ -1,7 +1,7 @@
 // handles code evaluation and attaching relevant objects to global and evaluation contexts
 
-const Sandbox    = require('./lib/sandbox.js')
-const ArrayUtils = require('./lib/array-utils.js')
+const Sandbox    = require('./lib/Sandbox')
+const ArrayUtils = require('./lib/ArrayUtils')
 
 class EvalSandbox {
   constructor(parent, makeGlobal, userProps = []) {

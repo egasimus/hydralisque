@@ -24,17 +24,7 @@ function initEditor ({
   host.render = ()=>{}
   host.o0     = null
 
-  const engine = {
-    eval (code) {
-      console.debug('eval', code)
-      events.send('eval', code)
-      //viewers.eval(code)
-    },
-    seek (t) {
-      console.debug('seek', t)
-      events.send('seek', t)
-    }
-  }
+  const engine = require('./editor_engine')(events)
 
   const editor =
     new (require('@hydralisque/editor/Editor'))({
@@ -43,7 +33,7 @@ function initEditor ({
     })
 
   const menu =
-    new (require('@hydralisque/editor/Menu'))({ editor, hydra: engine })
+    new (require('@hydralisque/editor/Menu'))({ editor, engine })
 
   const viewers =
     initViewers(document.getElementById('viewers'))
@@ -119,6 +109,11 @@ function initViewers (container) {
 }
 
 function initTimeline (container, engine) {
+
+  document.addEventListener('drop', event => {
+    event.preventDefault()
+    console.log(event)
+  })
 
   const T0 = + new Date()
   let T = T0
