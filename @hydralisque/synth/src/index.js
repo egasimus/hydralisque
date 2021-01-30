@@ -69,6 +69,10 @@ class HydraRenderer {
     this.sandbox.eval(code)
   }
 
+  seek (time) {
+    this.sandbox.set('time', time)
+  }
+
   getScreenImage (callback) {
     this.imageCallback = callback
     this.saveFrame = true

@@ -58,9 +58,14 @@ app.on('window-all-closed', () => {
 const createWindows = async () => {
   windows.viewer = windows.viewer || await createViewer()
   windows.editor = windows.editor || await createEditor()
-  require('electron').ipcMain.on('eval', (event,code)=>{
+  const {ipcMain} = require('electron')
+  ipcMain.on('eval', (event, code)=>{
     console.log('eval',code)
     windows.viewer.webContents.send('eval', code)
+  })
+  ipcMain.on('seek', (event, code)=>{
+    console.log('seek',code)
+    windows.viewer.webContents.send('seek', code)
   })
 }
 

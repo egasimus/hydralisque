@@ -3,29 +3,47 @@ const {ipcRenderer} = require('electron')
 function initEditor ({
   host,
   element,
-  repl
+  events = require('electron').ipcRenderer
 }) {
+
+  Object.assign(host, {
+    hush () {},
+    render () {},
+    o0: null,
+    onkeydown ({ctrlKey, altKey, shiftKey, metaKey, key}) {
+      console.debug(ctrlKey, altKey, shiftKey, metaKey, key)
+      if (ctrlKey && shiftKey && key === 'Enter') {
+         engine.eval(editor.getValue())
+      } else if (ctrlKey && key === 'Enter') {
+         engine.eval(editor.getLine())
+      }
+    }
+  })
 
   host.hush   = ()=>{}
   host.render = ()=>{}
   host.o0     = null
 
-  const hydra = {
+  const engine = {
     eval (code) {
       console.debug('eval', code)
-      ipcRenderer.send('eval', code)
-      viewers.eval(code)
+      events.send('eval', code)
+      //viewers.eval(code)
+    },
+    seek (t) {
+      console.debug('seek', t)
+      events.send('seek', t)
     }
   }
 
   const editor =
     new (require('@hydralisque/editor/Editor'))({
       container: document.getElementById('editor-container'),
-      hydra
+      hydra: engine
     })
 
   const menu =
-    new (require('@hydralisque/editor/Menu'))({ editor, hydra })
+    new (require('@hydralisque/editor/Menu'))({ editor, hydra: engine })
 
   const viewers =
     initViewers(document.getElementById('viewers'))
@@ -34,27 +52,17 @@ function initEditor ({
     new (require('@hydralisque/editor/Gallery'))(
       code => {
         editor.setValue(code)
-        hydra.eval(code)
+        engine.eval(code)
       }
     )
 
   const palette = initPalette(document.getElementById('palette'), gallery)
-
-  host.onkeydown = ({ctrlKey, altKey, shiftKey, metaKey, key}) => {
-    console.log(ctrlKey, altKey, shiftKey, metaKey, key)
-    if (ctrlKey && shiftKey && key === 'Enter') {
-       hydra.eval(editor.getValue())
-    } else if (ctrlKey && key === 'Enter') {
-       hydra.eval(editor.getLine())
-    }
-  }
 
   //require('hydra/keymaps.js')({
     //history: host.history,
     //editor,
     //gallery,
     //menu,
-    //repl,
     //log: console.log
   //})
 
@@ -67,6 +75,9 @@ function initEditor ({
   require("./midi")((index,value)=>{
     ccs[index].innerText = `cc[${index}]=${value}`
   })
+
+  const timeline = document.getElementById('timeline')
+  initTimeline(timeline, engine)
 
   return editor
 }
@@ -104,5 +115,31 @@ function initViewers (container) {
     const eval = code => events.emit('eval', `${code}\n;render(o${o});`)
     return { canvas, events, engine, eval }
   }
+
+}
+
+function initTimeline (container, engine) {
+
+  const T0 = + new Date()
+  let T = T0
+
+  container.appendChild(Object.assign(document.createElement('div'), {
+    innerText: '0'
+  }))
+
+  container.appendChild(Object.assign(document.createElement('hr'), {
+    className: 'flex-grow',
+    onclick (event) {
+      const seekTarget = (T-T0)*event.offsetX/event.target.offsetWidth
+      engine.seek(seekTarget)
+    }
+  }))
+
+  const currentTime = container.appendChild(Object.assign(document.createElement('div'), { innerText: + new Date() - T0 }))
+  require('raf-loop')(dt=>{
+    T += dt
+    currentTime.innerText = ((T-T0)/1000).toFixed(3) + 's'
+    //console.log('raf',args)
+  }).start()
 
 }
