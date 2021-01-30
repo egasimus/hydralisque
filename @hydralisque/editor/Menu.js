@@ -1,6 +1,3 @@
-const prettier = require("prettier/standalone")
-const parserBabel = require("prettier/parser-babel");
-
 class Menu {
 
   constructor ({
@@ -23,7 +20,11 @@ class Menu {
       })
 
     document.getElementById("shuffle-icon").onclick = () => {
-      this.clearAll()
+      hush()
+      window.speed && (window.speed = 1)
+      this.sketches.clear()
+      this.editor.clear()
+
       this.sketches.setRandomSketch()
       this.editor.setValue(this.sketches.code)
       this.engine.eval(this.editor.getValue())
@@ -49,12 +50,16 @@ class Menu {
     document.getElementById("pause-icon").onclick = () =>
       this.engine.pause()
 
-	  document.getElementById("mutator-icon").onclick = () => {
-      if (evt.shiftKey) {
+	  document.getElementById("mutator-icon").onclick = ({shiftKey}) => {
+      if (shiftKey) {
         this.editor.mutator.doUndo();
       } else {
         this.editor.mutator.mutate({reroll: false});
       }
+    }
+
+	  document.getElementById("record-icon").onclick = ({shiftKey}) => {
+      this.engine.record()
     }
 
   }
@@ -78,9 +83,11 @@ function showConfirmation (successCallback, terminateCallback) {
 }
 
 function formatCode (editor) {
-  editor.setValue(prettier.format(this.editor.getValue(), {
-    parser: "babel",
-    plugins: [parserBabel],
-    printWidth: 50
-  }))
+  editor.setValue(
+    require("prettier/standalone").format(
+      editor.getValue(), {
+      parser: "babel",
+      plugins: [require("prettier/parser-babel")],
+      printWidth: 50
+    }))
 }

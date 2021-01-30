@@ -4,9 +4,7 @@ module.exports = function initRecorder (self, enableStreamCapture) {
   if (enableStreamCapture) {
     self.captureStream = self.canvas.captureStream(25)
     // to do: enable capture stream of specific sources and outputs
-    self.synth.vidRecorder = new (require('./VideoRecorder.js'))(
-      self.captureStream
-    )
+    self.synth.vidRecorder = new VideoRecorder(self.captureStream)
   }
 }
 

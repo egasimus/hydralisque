@@ -11,5 +11,8 @@ module.exports = (
   },
   pause (state = 'toggle') {
     events.send(CHANNEL, { pause: state })
-  }
+  },
+  record (state = 'toggle') {
+    events.send(CHANNEL, { record: state })
+  },
 })

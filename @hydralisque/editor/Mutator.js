@@ -13,7 +13,6 @@ class Mutator {
     this.initialVector = [];
   }
 
-
   mutate(options) {
     // Get text from CodeMirror.
     let text = this.editor.cm.getValue();

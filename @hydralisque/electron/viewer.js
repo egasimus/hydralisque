@@ -63,11 +63,19 @@ function initEngine ({
     engine.tick.bind(engine)
   ).start()
 
-  events.on(IPCChannel, (event, {
-    eval,
-    seek,
-    pause
-  }) => {
+  let recording = false
+
+  events.on(IPCChannel, (event, commands) => {
+
+    console.debug(commands)
+    console.debug(engine)
+
+    const {
+      eval,
+      seek,
+      pause,
+      record
+    } = commands
 
     if (eval) engine.eval(eval)
 
@@ -75,16 +83,34 @@ function initEngine ({
 
     switch (pause) {
       case true:
-        paused = true
         mainLoop.stop()
+        paused = true
         break
       case false:
-        paused = false
         mainLoop.start()
+        paused = false
         break
       case 'toggle':
         paused ? mainLoop.start() : mainLoop.stop();
         paused = !paused
+        break
+    }
+
+    const recorder = engine.synth.vidRecorder;
+    console.log(recorder)
+    switch (record) {
+      case true:
+        recorder.start()
+        recording = true
+        break
+      case false:
+        recorder.stop()
+        recording = false
+        break
+      case 'toggle':
+        recording ? recorder.stop() : recorder.start();
+        recording = !recording
+        break
     }
 
   })
