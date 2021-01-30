@@ -1,6 +1,27 @@
+const {info} = console
 //const transforms = require('./glsl-transforms.js')
 
-module.exports = Output
+module.exports = function initOutputs (self, numOutputs) {
+  info('initOutputs', numOutputs)
+
+  self.o = (Array(numOutputs)).fill().map((el, index) => {
+    const options = {
+      regl:      self.regl,
+      width:     self.width,
+      height:    self.height,
+      precision: self.precision,
+      label:     `o${index}`
+    }
+    const o = new Output(options)
+  //  o.render()
+    o.id = index
+    self.synth['o'+index] = o
+    return o
+  })
+
+  // set default output
+  self.output = self.o[0]
+}
 
 function Output ({
   regl,
@@ -9,16 +30,15 @@ function Output ({
   width,
   height
 }) {
-  this.regl = regl
-  this.precision = precision
-  this.label = label
-  this.positionBuffer = this.regl.buffer([
-    [-2, 0],
-    [0, -2],
-    [2, 2]
-  ])
+  console.log(this)
+  Object.assign(this, {
+    regl,
+    precision,
+    label,
+    positionBuffer: regl.buffer([[-2, 0],[0, -2],[2, 2]]),
+    draw: () => {}
+  })
 
-  this.draw = () => {}
   this.init()
   this.pingPongIndex = 0
 
@@ -127,5 +147,3 @@ Output.prototype.tick = function (props) {
 //  console.log(props)
   this.draw(props)
 }
-
-module.exports = Output

@@ -1,8 +1,5 @@
 // converts a tree of javascript functions to a shader
 
-// Add extra functionality to Array.prototype for generating sequences in time
-const arrayUtils = require('../lib/ArrayUtils')
-
 // [WIP] how to treat different dimensions (?)
 const DEFAULT_CONVERSIONS = {
   float: {
@@ -175,7 +172,10 @@ function formatArguments (transform, startIndex) {
           typedArg.value = fillArrayWithDefaults(typedArg.value, typedArg.vecLen)
         } else {
           //  console.log("is Array")
-          typedArg.value = (context, props, batchId) => arrayUtils.getValue(userArgs[index])(props)
+          // ArrayUtils adds extra functionality to Array.prototype
+          // for generating sequences in time
+          typedArg.value = (context, props, batchId) =>
+            require('./ArrayUtils').getValue(userArgs[index])(props)
           typedArg.isUniform = true
         }
       }

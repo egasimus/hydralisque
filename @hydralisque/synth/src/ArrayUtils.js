@@ -1,6 +1,7 @@
 // WIP utils for working with arrays
 // Possibly should be integrated with lfo extension, etc.
 // to do: transform time rather than array values, similar to working with coordinates in hydra
+const {warn} = console
 
 const map = (num, in_min, in_max, out_min, out_max) => {
   return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -9,6 +10,8 @@ const map = (num, in_min, in_max, out_min, out_max) => {
 module.exports = {
 
   init: () => {
+
+    warn('ArrayUtils.init() - patching Array.prototype (unsafe!)')
 
     Array.prototype.fast = function(speed = 1) {
       this._speed = speed

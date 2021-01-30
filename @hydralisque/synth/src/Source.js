@@ -1,5 +1,17 @@
-const Webcam = require('./lib/Webcam')
-const Screen = require('./lib/Screen')
+module.exports = function initSources (self, numSources) {
+  self.s = []
+  for (let i = 0; i < numSources; i++) {
+    let s = new HydraSource({
+      regl:   self.regl,
+      pb:     self.pb,
+      width:  self.width,
+      height: self.height,
+      label:  `s${i}`
+    })
+    self.synth['s' + self.s.length] = s
+    self.s.push(s)
+  }
+}
 
 class HydraSource {
   constructor ({ regl, width, height, pb, label = ""}) {
@@ -26,7 +38,7 @@ class HydraSource {
 
   initCam (index) {
     const self = this
-    Webcam(index)
+    require('./Webcam')(index)
       .then(response => {
         self.src = response.video
         self.dynamic = true
@@ -80,7 +92,7 @@ class HydraSource {
 
   initScreen () {
     const self = this
-    Screen()
+    require('./Screen')()
       .then(function (response) {
         self.src = response.video
         self.tex = self.regl.texture(self.src)
@@ -130,5 +142,3 @@ class HydraSource {
     return this.tex
   }
 }
-
-module.exports = HydraSource

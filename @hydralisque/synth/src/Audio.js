@@ -1,4 +1,23 @@
-const Meyda = require('meyda')
+const {info} = console
+
+module.exports = function initAudio (self, numBins = 4) {
+  info('initAudio', ...arguments)
+  self.synth.a = new Audio({
+    numBins,
+    // changeListener: ({audio}) => {
+    //   that.a = audio.bins.map((_, index) =>
+    //     (scale = 1, offset = 0) => () => (audio.fft[index] * scale + offset)
+    //   )
+    //
+    //   if (that.makeGlobal) {
+    //     that.a.forEach((a, index) => {
+    //       const aname = `a${index}`
+    //       window[aname] = a
+    //     })
+    //   }
+    // }
+  })
+}
 
 class Audio {
   constructor ({
@@ -54,7 +73,7 @@ class Audio {
         let audio_stream = this.context.createMediaStreamSource(stream)
 
       //  console.log(this.context)
-        this.meyda = Meyda.createMeydaAnalyzer({
+        this.meyda = require('meyda').createMeydaAnalyzer({
           audioContext: this.context,
           source: audio_stream,
           featureExtractors: [
@@ -211,5 +230,3 @@ class Audio {
     this.ctx.stroke()*/
   }
 }
-
-module.exports = Audio

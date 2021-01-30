@@ -1,4 +1,57 @@
-const RootShaders = module.exports = {
+const {info} = console
+
+module.exports = function initRegl (self) {
+  info('initRegl', ...arguments)
+
+  const regl = self.regl = require('regl')({
+  //  profile: true,
+    canvas: self.canvas,
+    pixelRatio: 1//,
+    // extensions: [
+    //   'oes_texture_half_float',
+    //   'oes_texture_half_float_linear'
+    // ],
+    // optionalExtensions: [
+    //   'oes_texture_float',
+    //   'oes_texture_float_linear'
+   //]
+  })
+
+  // clear color buffer to black and depth buffer to 1
+  regl.clear({  color: [0, 0, 0, 1] })
+
+  Object.assign(self, {
+
+    renderAll: regl({
+      frag: RootShaders.ALL_FRAG(self.precision),
+      vert: RootShaders.ALL_VERT(self.precision),
+      attributes: { position: [ [-2, 0], [0, -2], [2, 2] ] },
+      uniforms: {
+        tex0: regl.prop('tex0'),
+        tex1: regl.prop('tex1'),
+        tex2: regl.prop('tex2'),
+        tex3: regl.prop('tex3')
+      },
+      count: 3,
+      depth: { enable: false }
+    }),
+
+    renderFbo: regl({
+      frag: RootShaders.FBO_FRAG(self.precision),
+      vert: RootShaders.FBO_VERT(self.precision),
+      attributes: { position: [ [-2, 0], [0, -2], [2, 2] ] },
+      uniforms: {
+        tex0: regl.prop('tex0'),
+        resolution: regl.prop('resolution')
+      },
+      count: 3,
+      depth: { enable: false }
+    })
+
+  })
+}
+
+const RootShaders = {
 
   ALL_FRAG: precision => `
     precision ${precision} float;

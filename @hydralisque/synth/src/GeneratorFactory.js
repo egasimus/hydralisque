@@ -1,21 +1,47 @@
-const glslTransforms = require('./glsl/functions.js')
-const GlslSource     = require('./glsl/GLSLSource.js')
+const {info} = console
+
+module.exports = function generateGlslTransforms (self) {
+  info('generateGlslTransforms', ...arguments)
+
+  self.generator = new GeneratorFactory({
+    defaultOutput:    self.o[0],
+    defaultUniforms:  self.o[0].uniforms,
+    extendTransforms: self.extendTransforms,
+    changeListener:
+      ({type, method, synth}) => {
+        if (type === 'add') {
+          self.synth[method] = synth.generators[method]
+          if(self.sandbox) self.sandbox.add(method)
+        } else if (type === 'remove') {
+          // what to do here? dangerously deleting window methods
+          //delete window[method]
+        }
+      }
+  })
+
+  self.synth.setFunction =
+    self.generator.setFunction.bind(self.generator)
+
+}
 
 class GeneratorFactory {
+
   constructor ({
-      defaultUniforms,
+    defaultUniforms,
+    defaultOutput,
+    extendTransforms = [],
+    changeListener = (() => {})
+  } = {}) {
+    Object.assign(this, {
       defaultOutput,
-      extendTransforms = [],
-      changeListener = (() => {})
-    } = {}
-    ) {
-    this.defaultOutput = defaultOutput
-    this.defaultUniforms = defaultUniforms
-    this.changeListener = changeListener
-    this.extendTransforms = extendTransforms
-    this.generators = {}
+      defaultUniforms,
+      changeListener,
+      extendTransforms,
+      generators: {}
+    })
     this.init()
   }
+
   init () {
     this.glslTransforms = {}
     this.generators = Object.entries(this.generators).reduce((prev, [method, transform]) => {
@@ -23,12 +49,9 @@ class GeneratorFactory {
       return prev
     }, {})
 
-    this.sourceClass = (() => {
-      return class extends GlslSource {
-      }
-    })()
+    this.sourceClass = require('./GLSLSource')()
 
-    let functions = glslTransforms
+    let functions = require('./GLSLFunctions')
 
     // add user definied transforms
     if (Array.isArray(this.extendTransforms)) {
@@ -38,9 +61,9 @@ class GeneratorFactory {
     }
 
     return functions.map((transform) => this.setFunction(transform))
- }
+  }
 
- _addMethod (method, transform) {
+  _addMethod (method, transform) {
     this.glslTransforms[method] = transform
     if (transform.type === 'src') {
       const func = (...args) => new this.sourceClass({
@@ -157,5 +180,3 @@ function processGlsl(obj) {
   }
 
 }
-
-module.exports = GeneratorFactory

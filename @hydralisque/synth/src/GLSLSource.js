@@ -1,22 +1,27 @@
-const {generateGlsl, formatArguments} = require('./utils')
-// const glslTransforms = require('./glsl/composable-glsl-functions.js')
-const utilityGlsl = require('./utility-functions')
+const {info} = console
 
-var GlslSource = function (obj) {
+module.exports = function initGLSLSource () {
+  info('initGLSLSource', ...arguments)
+  return class extends GLSLSource {}
+}
+
+// const glslTransforms = require('./glsl/composable-glsl-functions.js')
+
+const GLSLSource = function (obj) {
   this.transforms = []
   this.transforms.push(obj)
   this.defaultOutput = obj.defaultOutput
   this.synth = obj.synth
-  this.type = 'GlslSource'
+  this.type = 'GLSLSource'
   this.defaultUniforms = obj.defaultUniforms
   return this
 }
 
-GlslSource.prototype.addTransform = function (obj)  {
+GLSLSource.prototype.addTransform = function (obj)  {
     this.transforms.push(obj)
 }
 
-GlslSource.prototype.out = function (_output) {
+GLSLSource.prototype.out = function (_output) {
   var output = _output || this.defaultOutput
   var glsl = this.glsl(output)
   this.synth.currentFunctions = []
@@ -28,7 +33,7 @@ GlslSource.prototype.out = function (_output) {
   }
 }
 
-GlslSource.prototype.glsl = function () {
+GLSLSource.prototype.glsl = function () {
   //var output = _output || this.defaultOutput
   var self = this
   // uniforms included in all shaders
@@ -41,7 +46,7 @@ GlslSource.prototype.glsl = function () {
       // if (transforms.length > 0) passes.push(this.compile(transforms, output))
       // transforms = []
       // var uniforms = {}
-      // const inputs = formatArguments(transform, -1)
+      // const inputs = require('./GLSLUtils').formatArguments(transform, -1)
       // inputs.forEach((uniform) => { uniforms[uniform.name] = uniform.value })
       //
       // passes.push({
@@ -60,9 +65,9 @@ GlslSource.prototype.glsl = function () {
   return passes
 }
 
-GlslSource.prototype.compile = function (transforms) {
+GLSLSource.prototype.compile = function (transforms) {
 
-  var shaderInfo = generateGlsl(transforms)
+  var shaderInfo = require('./GLSLUtils').generateGlsl(transforms)
   var uniforms = {}
   shaderInfo.uniforms.forEach((uniform) => { uniforms[uniform.name] = uniform.value })
 
@@ -83,7 +88,7 @@ GlslSource.prototype.compile = function (transforms) {
   varying vec2 uv;
   uniform sampler2D prevBuffer;
 
-  ${Object.values(utilityGlsl).map((transform) => {
+  ${Object.values(require('./UtilityFunctions')).map((transform) => {
   //  console.log(transform.glsl)
     return `
             ${transform.glsl}
@@ -110,4 +115,3 @@ GlslSource.prototype.compile = function (transforms) {
 
 }
 
-module.exports = GlslSource

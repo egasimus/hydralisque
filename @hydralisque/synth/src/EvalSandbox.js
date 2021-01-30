@@ -1,12 +1,17 @@
 // handles code evaluation and attaching relevant objects to global and evaluation contexts
+const {info} = console
 
-const Sandbox    = require('./lib/Sandbox')
-const ArrayUtils = require('./lib/ArrayUtils')
+module.exports = function initEvalSandbox (synth, makeGlobal, userProps) {
+  info('initEvalSandbox', ...arguments)
+  return new EvalSandbox(synth, makeGlobal, userProps)
+}
+
+const ArrayUtils = require('./ArrayUtils')
 
 class EvalSandbox {
   constructor(parent, makeGlobal, userProps = []) {
     this.makeGlobal = makeGlobal
-    this.sandbox = Sandbox(parent)
+    this.sandbox = require('./Sandbox')(parent)
     this.parent = parent
     var properties = Object.keys(parent)
     properties.forEach((property) => this.add(property))
@@ -42,5 +47,3 @@ class EvalSandbox {
     this.sandbox.eval(code)
   }
 }
-
-module.exports = EvalSandbox

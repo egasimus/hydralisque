@@ -1,3 +1,15 @@
+module.exports = function initRecorder (self, enableStreamCapture) {
+  // if stream capture is enabled, self object contains the capture stream
+  self.captureStream = null
+  if (enableStreamCapture) {
+    self.captureStream = self.canvas.captureStream(25)
+    // to do: enable capture stream of specific sources and outputs
+    self.synth.vidRecorder = new (require('./VideoRecorder.js'))(
+      self.captureStream
+    )
+  }
+}
+
 class VideoRecorder {
   constructor(stream) {
     this.mediaSource = new MediaSource()
@@ -82,5 +94,3 @@ class VideoRecorder {
     }
   }
 }
-
-module.exports = VideoRecorder

@@ -16,66 +16,65 @@ class HydraRenderer {
     extendTransforms = {} // add your own functions on init
   } = {}) {
 
-    require('./lib/ArrayUtils').init()
-
-    this.pb          = patchbay
-    this.width       = width
-    this.height      = height
-    this.renderAll   = false
-    this.detectAudio = detectAudio
-
-    initCanvas(this, canvas)
-
-    this.synth = {
-      // object that contains all properties that will be made available
-      // on the global context and during local evaluation
-      time:   0,
-      bpm:    30,
-      width,
-      height,
-      fps:    undefined,
-      stats:  { fps: 0 },
-      speed:  1,
-      mouse:  require('mouse-change')(),
-      render: this._render.bind(this),
-      setResolution: this.setResolution.bind(this),
-      update: (dt) => {},// user defined update function
-      hush:   this.hush.bind(this)
-    }
-
-    this.timeSinceLastUpdate = 0
-    this._time = 0 // for internal use, only to use for deciding when to render frames
+    require('./ArrayUtils').init()
 
     // only allow valid precision options
     let precisionOptions = ['lowp','mediump','highp']
     let precisionValid = precisionOptions.includes(precision.toLowerCase())
-    this.precision = precisionValid ? precision.toLowerCase() : 'mediump'
     if(!precisionValid) console.warn(
       '[hydra-synth warning]\n'+
       'Constructor was provided an invalid floating point precision value of "'
       + precision + '". Using default value of "mediump" instead.')
 
-    this.extendTransforms = extendTransforms
+    Object.assign(this, {
+      pb: patchbay,
+      width,
+      height,
+      renderAll: false,
+      detectAudio,
+      synth: {
+        // object that contains all properties that will be made available
+        // on the global context and during local evaluation
+        time:   0,
+        bpm:    30,
+        width,
+        height,
+        fps:    undefined,
+        stats:  { fps: 0 },
+        speed:  1,
+        mouse:  require('mouse-change')(),
+        render: this._render.bind(this),
+        setResolution: this.setResolution.bind(this),
+        update: (dt) => {},// user defined update function
+        hush:   this.hush.bind(this)
+      },
+      timeSinceLastUpdate: 0,
+      _time: 0, // for internal use, only to use for deciding when to render frames
+      precision: precisionValid ? precision.toLowerCase() : 'mediump',
+      extendTransforms
+    })
 
-    initRegl(this)
+    require('./Canvas')(this, canvas)
 
-    initOutputs(this, numOutputs)
+    require('./RootShaders')(this)
 
-    initSources(this, numSources)
+    require('./Output')(this, numOutputs)
 
-    generateGlslTransforms(this)
+    require('./Source')(this, numSources)
 
-    initScreenshot(this)
+    require('./GeneratorFactory')(this)
 
-    initRecorder(this, enableStreamCapture)
+    require('./Screenshot')(this)
+
+    require('./VideoRecorder')(this, enableStreamCapture)
 
     this.generator = undefined
 
-    if (detectAudio) initAudio(this)
+    if (detectAudio) require('./Audio')(this)
 
     if (autoLoop) (require('raf-loop'))(this.tick.bind(this)).start()
     
-    this.sandbox = new (require('./EvalSandbox.js'))(
+    this.sandbox = require('./EvalSandbox')(
       this.synth,
       makeGlobal,
       // properties that the user can set:
@@ -141,19 +140,6 @@ class HydraRenderer {
     }, 300);
   }
 
-  createSource (i) {
-    let s = new (require('./HydraSource'))({
-      regl:   this.regl,
-      pb:     this.pb,
-      width:  this.width,
-      height: this.height,
-      label:  `s${i}`
-    })
-    this.synth['s' + this.s.length] = s
-    this.s.push(s)
-    return s
-  }
-
   _render (output) {
     if (output) {
       this.output = output
@@ -214,158 +200,6 @@ class HydraRenderer {
   //  this.regl.poll()
   }
 
-
 }
 
 module.exports = HydraRenderer
-
-function initRegl (self) {
-
-  const RootShaders = require('./glsl/RootShaders')
-
-  const regl = self.regl = require('regl')({
-  //  profile: true,
-    canvas: self.canvas,
-    pixelRatio: 1//,
-    // extensions: [
-    //   'oes_texture_half_float',
-    //   'oes_texture_half_float_linear'
-    // ],
-    // optionalExtensions: [
-    //   'oes_texture_float',
-    //   'oes_texture_float_linear'
-   //]
-  })
-
-  // clear color buffer to black and depth buffer to 1
-  regl.clear({  color: [0, 0, 0, 1] })
-
-  Object.assign(self, {
-
-    renderAll: regl({
-      frag: RootShaders.ALL_FRAG(self.precision),
-      vert: RootShaders.ALL_VERT(self.precision),
-      attributes: { position: [ [-2, 0], [0, -2], [2, 2] ] },
-      uniforms: {
-        tex0: regl.prop('tex0'),
-        tex1: regl.prop('tex1'),
-        tex2: regl.prop('tex2'),
-        tex3: regl.prop('tex3')
-      },
-      count: 3,
-      depth: { enable: false }
-    }),
-
-    renderFbo: regl({
-      frag: RootShaders.FBO_FRAG(self.precision),
-      vert: RootShaders.FBO_VERT(self.precision),
-      attributes: { position: [ [-2, 0], [0, -2], [2, 2] ] },
-      uniforms: {
-        tex0: regl.prop('tex0'),
-        resolution: regl.prop('resolution')
-      },
-      count: 3,
-      depth: { enable: false }
-    })
-
-  })
-}
-
-function initOutputs (self, numOutputs) {
-  self.o = (Array(numOutputs)).fill().map((el, index) => {
-    const options = {
-      regl:      self.regl,
-      width:     self.width,
-      height:    self.height,
-      precision: self.precision,
-      label:     `o${index}`
-    }
-    const o = new (require('./Output'))(options)
-  //  o.render()
-    o.id = index
-    self.synth['o'+index] = o
-    return o
-  })
-
-  // set default output
-  self.output = self.o[0]
-}
-
-function initSources (self, numSources) {
-  self.s = []
-  for(var i = 0; i < numSources; i++) {
-    self.createSource(i)
-  }
-}
-
-function generateGlslTransforms (self) {
-  self.generator = new (require('./GeneratorFactory.js'))({
-    defaultOutput: self.o[0],
-    defaultUniforms: self.o[0].uniforms,
-    extendTransforms: self.extendTransforms,
-    changeListener: ({type, method, synth}) => {
-        if (type === 'add') {
-          self.synth[method] = synth.generators[method]
-          if(self.sandbox) self.sandbox.add(method)
-        } else if (type === 'remove') {
-          // what to do here? dangerously deleting window methods
-          //delete window[method]
-        }
-    //  }
-    }
-  })
-  self.synth.setFunction = self.generator.setFunction.bind(self.generator)
-}
-
-function initScreenshot (self) {
-  // boolean to store when to save screenshot
-  self.saveFrame = false
-  self.synth.screencap = () => { self.saveFrame = true }
-}
-
-function initRecorder (self, enableStreamCapture) {
-  // if stream capture is enabled, self object contains the capture stream
-  self.captureStream = null
-  if (enableStreamCapture) {
-    self.captureStream = self.canvas.captureStream(25)
-    // to do: enable capture stream of specific sources and outputs
-    self.synth.vidRecorder = new (require('./lib/VideoRecorder.js'))(
-      self.captureStream
-    )
-  }
-}
-
-function initCanvas (self, canvas) {
-  // create main output canvas and add to screen
-  if (canvas) {
-    self.canvas = canvas
-    self.width = canvas.width
-    self.height = canvas.height
-  } else {
-    self.canvas = document.createElement('canvas')
-    self.canvas.width = self.width
-    self.canvas.height = self.height
-    self.canvas.style.width = '100%'
-    self.canvas.style.height = '100%'
-    self.canvas.style.imageRendering = 'pixelated'
-    document.body.appendChild(self.canvas)
-  }
-}
-
-function initAudio (self, numBins = 4) {
-  self.synth.a = new (require('./lib/Audio'))({
-    numBins,
-    // changeListener: ({audio}) => {
-    //   that.a = audio.bins.map((_, index) =>
-    //     (scale = 1, offset = 0) => () => (audio.fft[index] * scale + offset)
-    //   )
-    //
-    //   if (that.makeGlobal) {
-    //     that.a.forEach((a, index) => {
-    //       const aname = `a${index}`
-    //       window[aname] = a
-    //     })
-    //   }
-    // }
-  })
-}

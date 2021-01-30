@@ -25,18 +25,10 @@ class Menu {
     this.shuffleButton.onclick = this.shuffleSketches.bind(this)
     this.shareButton.onclick = this.shareSketch.bind(this)
     this.clearButton.onclick = this.clearAll.bind(this)
-    this.closeButton.onclick = () => {
-      if(!this.isClosed) {
-        this.closeModal()
-      } else {
-        this.openModal()
-      }
-    }
-    this.pauseButton.onclick = () => {
-      this.engine.pause()
-    }
-
-	  this.mutatorButton.onclick = this.mutateSketch.bind(this);
+    this.closeButton.onclick = () =>
+      this.isClosed ? this.openModal : this.closeModal
+    this.pauseButton.onclick = () => this.engine.pause()
+	  this.mutatorButton.onclick = () => this.mutateSketch()
     this.isClosed = false
     this.closeModal()
   }
@@ -124,7 +116,6 @@ class Menu {
   }
 
   mutateSketch(evt) {
-    console.log(mutate);
   	if (evt.shiftKey) {
       this.editor.mutator.doUndo();
   	} else {

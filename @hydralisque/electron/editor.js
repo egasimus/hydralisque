@@ -7,9 +7,9 @@ function initEditor ({
 }) {
 
   Object.assign(host, {
-    hush () {},
-    render () {},
     o0: null,
+    hush   () {},
+    render () {},
     onkeydown ({ctrlKey, altKey, shiftKey, metaKey, key}) {
       console.debug(ctrlKey, altKey, shiftKey, metaKey, key)
       if (ctrlKey && shiftKey && key === 'Enter') {
