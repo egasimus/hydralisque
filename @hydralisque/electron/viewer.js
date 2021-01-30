@@ -2,7 +2,7 @@ module.exports = initViewer
 
 function initViewer ({
   host   = window,
-  canvas = initCanvas(document.getElementById('hydra-canvas')),
+  canvas = initCanvas(host, document.getElementById('hydra-canvas')),
   events = require('electron').ipcRenderer
 }={}) {
 
@@ -25,10 +25,18 @@ function initViewer ({
     },
   })
 
+  host.onresize = event => {
+    const {innerWidth, innerHeight} = event.target
+    canvas.width  = innerWidth
+    canvas.height = innerHeight
+  }
+
   return initEngine({
-    host,
     events,
+
+    server: host.location.origin,
     patchbay: new (require('@hydralisque/editor/PatchBay.js'))(),
+
     canvas,
     autoLoop: false,
     precision: isIOS ? 'highp' : 'mediump'
@@ -36,16 +44,18 @@ function initViewer ({
 }
 
 function initEngine ({
-  host, events, patchbay, canvas, autoLoop, precision
+  events,
+  patchbay, server,
+  canvas, autoLoop, precision
 }) {
   const engine = new (require('@hydralisque/synth'))({
     patchbay, canvas, autoLoop, precision
   })
 
-  if (patchbay) patchbay.init(engine.captureStream, {
-    server: host.location.origin,
-    room:  'iclc'
-  })
+  if (patchbay) patchbay.init(
+    engine.captureStream,
+    { server, room: 'iclc' }
+  )
 
   const mainLoop = require('raf-loop')(
     engine.tick.bind(engine)
@@ -66,7 +76,10 @@ function initEngine ({
   return mainLoop
 }
 
-function initCanvas (canvas) {
+function initCanvas (host, canvas) {
+  canvas.width = host.innerWidth
+  canvas.height = host.innerHeight
+
   canvas.style = {}
   canvas.style.position = 'absolute';
   canvas.style.top = '0';
