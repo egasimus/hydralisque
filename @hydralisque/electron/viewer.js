@@ -25,13 +25,7 @@ function initViewer ({
     },
   })
 
-  host.onresize = event => {
-    const {innerWidth, innerHeight} = event.target
-    canvas.width  = innerWidth
-    canvas.height = innerHeight
-  }
-
-  return initEngine({
+  const { engine, mainLoop } = initEngine({
     events,
 
     server: host.location.origin,
@@ -41,6 +35,13 @@ function initViewer ({
     autoLoop: false,
     precision: isIOS ? 'highp' : 'mediump'
   })
+
+  host.onresize = event => {
+    const {innerWidth, innerHeight} = event.target
+    engine.setResolution(innerWidth, innerHeight)
+  }
+
+  return mainLoop
 }
 
 function initEngine ({
@@ -73,7 +74,7 @@ function initEngine ({
     engine.seek(time)
   })
 
-  return mainLoop
+  return { engine, mainLoop }
 }
 
 function initCanvas (host, canvas) {
