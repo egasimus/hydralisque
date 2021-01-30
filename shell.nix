@@ -4,11 +4,6 @@ let pkgs = import <nixpkgs> {}; in pkgs.stdenv.mkDerivation rec {
     nodejs-14_x
     electron_11
     yarn
-    yarn2nix
-
-    nodePackages.npm
-    nodePackages.node2nix
-
     pkg-config
     xlibs.libX11
     xlibs.libXi
